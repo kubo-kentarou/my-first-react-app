@@ -3,14 +3,12 @@ import "./App.css";
 import { Table } from "./components/Table";
 import { Button } from "./components/Button";
 import { firebaseApp } from "./firebase";
-const INITIAL_STUDENTS = [
-  { id: 1, name: "Bob" },
-  { id: 2, name: "Amy" },
-];
+//ここから授業リファクタリング
+import { addStudent } from "./components/Addstudent";
+
 function App() {
   const [students, setStudents] = React.useState([]);
   const [studentName, setStudentName] = React.useState("");
-  const [studentSearch, setStudentSearch] = React.useState([]);
   const [id, setId] = React.useState(0);
   const [currentPageNum, setCurrentPageNum] = React.useState(0);
   const [totalPages, setTotalPages] = React.useState(0);
@@ -20,56 +18,26 @@ function App() {
   const getStudents = async () => {
     const studentsRef = await firebaseApp
       .firestore()
-      .collection("students") //�R���N�V����
-      .get(); //�擾
+      .collection("students")
+      .get();
     if (studentsRef.empty) return;
     const students = [];
     for (const doc of studentsRef.docs) {
-      const student = doc.data();
-      students.push({ ...student, id: doc.id });
+      students.push({ ...doc.data(), id: doc.id });
     }
-    setStudentSearch(
-      students.map((student) => {
-        console.log("set", student.name);
-        return student.name;
-      })
-    );
-
     setStudents(students);
-    console.log(students);
   };
 
   useEffect(() => {
     getStudents();
   }, []);
-  /** ���k�̒ǉ����s������ */
-  const addStudent = async () => {
-    if (studentName === "") return alert("Please input name");
-    setStudents([...students, { id, name: studentName }]);
-    setStudentName("");
-    setId((prevState) => prevState + 1);
 
-    const data = {
-      name: studentName,
-      age: "20",
-    };
-
-    // const res = await firebaseApp
-    //   .firestore()
-    //   .collection("students")
-    //   .doc()
-    //   .set(data);
-    // console.log(res);
-
-    if (studentName === "") return alert("Please input name");
-    const db = firebaseApp.firestore();
-    const studentCollection = db.collection("students");
-    const newStudentDocRef = studentCollection.doc();
-    await newStudentDocRef.set(data);
-
+  const receiveAddStudent = async () => {
+    addStudent(studentName);
     await getStudents();
+    setStudentName("");
   };
-  /** ���k�̍폜���s������ */
+
   const deleteStudent = async (studentId) => {
     setStudents(
       students.filter((student) => {
@@ -83,16 +51,15 @@ function App() {
         .collection("students")
         .doc(studentId)
         .delete();
-      console.log("Delete Return", deleteReturn);
     } catch (e) {
       console.error("Error removing document: ", e);
     }
   };
-  /** ���k�̃A�b�v�f�[�g���s������ */
+
   const updateStudent = async (studentId) => {
     const inputVal = prompt("name please: ");
     if (inputVal === "") {
-      alert("�A���[�g�̕��");
+      alert("Please input name");
       return;
     }
     setStudents(
@@ -108,10 +75,8 @@ function App() {
       .collection("students")
       .doc(studentId)
       .update({ name: inputVal });
-
-    console.log(updateReturn);
   };
-  /** �y�[�W�l�[�V�����̐ݒ���s������ */
+
   const pageNationStudent = () => {
     chankArray = students.filter((student, index) => {
       return (
@@ -123,33 +88,17 @@ function App() {
     return chankArray;
   };
   const prevPageNation = () => {
-    //�O�փ{�^��
+    //?O??{?^??
     setCurrentPageNum(currentPageNum - 1);
   };
   const nextPageNation = () => {
-    //���փ{�^��
+    //????{?^??
     setCurrentPageNum(currentPageNum + 1);
   };
   return (
     <div className="App" style={{ maxWidth: "80%", margin: "20px auto" }}>
-      <span>Search</span>
-      <input
-        type="text"
-        placeholder="userName"
-        onChange={(e) => {
-          e.preventDefault();
-          const searchName = e.target.value;
-          // console.log(studentSearch);
-          setStudentSearch(
-            studentSearch.filter((student) => {
-              return student.includes(searchName);
-            })
-          );
-        }}
-      />
-
       <div>
-        {/** �����Ő��k�̏���ǉ����邽�߂̃t�B�[���h��p�� */}
+        {/** ????????k??????????????t?B?[???h??p?? */}
         <div
           style={{
             display: "flex",
@@ -174,7 +123,7 @@ function App() {
               setStudentName(e.target.value);
             }}
           />
-          <Button onClick={addStudent} title="Add student"></Button>
+          <Button onClick={receiveAddStudent} title="Add student"></Button>
         </div>
       </div>
       <Table
@@ -182,7 +131,6 @@ function App() {
         students={students}
         updateStudent={updateStudent}
         pageNationStudent={pageNationStudent}
-        studentSearch={studentSearch}
       />
       <div className="pageNationButton">
         {currentPageNum >= 1 ? (
@@ -190,14 +138,14 @@ function App() {
         ) : (
           <span>no data</span>
         )}
-        {/* �y�[�W�ԍ��̕\�� */}
+        {/* ?y?[?W?????\?? */}
         <span className="page"> {currentPageNum + 1} </span>
         {totalPages - 1 !== currentPageNum ? (
           <button onClick={nextPageNation}>next</button>
         ) : (
           <span>no data</span>
         )}
-        {/* ���y�[�W / ���y�[�W�̕\�� */}
+        {/* ???y?[?W / ???y?[?W??\?? */}
         <div>
           {currentPageNum + 1} / {totalPages}
         </div>

@@ -19,40 +19,14 @@ const TableHeaderCell = (props) => (
   </th>
 );
 
-//フィルター実行
-// const Passed = (result) => {
-//   resultName = result;
-// };
-
-// const Search = (props) => {
-//   return (
-//     <div>
-//       <span>Search</span>
-//       <input
-//         type="text"
-//         placeholder="userName"
-//         onChange={(e) => {
-//           e.preventDefault();
-//           const searchName = e.target.value;
-//           const result = props.students.filter((student) => {
-//             return student.includes(searchName);
-//           });
-//           resultName = result;
-//           console.log(resultName);
-//         }}
-//       />
-//     </div>
-//   );
-// };
-
 const Table = ({
   students,
   deleteStudent,
   updateStudent,
   pageNationStudent,
-  studentSearch,
 }) => {
   let chankArray = pageNationStudent();
+  console.log("CHANKARRAY", chankArray);
   return (
     <div>
       <table
@@ -73,30 +47,28 @@ const Table = ({
           {chankArray.length ? (
             chankArray.map((s) => {
               return (
-                studentSearch === s.name && (
-                  <tr key={s.id}>
-                    <TableBodyCell>{s.id}</TableBodyCell>
-                    <TableBodyCell>{s.name}</TableBodyCell>
-                    <TableBodyCell>
-                      <Button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          deleteStudent(s.id);
-                        }}
-                        title="delete"
-                      />
-                      <Button
-                        style={{ marginRight: 10 }}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          updateStudent(s.id);
-                          console.log("CLICKED");
-                        }}
-                        title="update"
-                      />
-                    </TableBodyCell>
-                  </tr>
-                )
+                <tr key={s.id}>
+                  <TableBodyCell>{s.id}</TableBodyCell>
+                  <TableBodyCell>{s.name}</TableBodyCell>
+                  <TableBodyCell>
+                    <Button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        deleteStudent(s.id);
+                      }}
+                      title="delete"
+                    />
+                    <Button
+                      style={{ marginRight: 10 }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        updateStudent(s.id);
+                        console.log("CLICKED");
+                      }}
+                      title="update"
+                    />
+                  </TableBodyCell>
+                </tr>
               );
             })
           ) : (

@@ -2,13 +2,14 @@ import React from "react";
 export const Button = ({ onClick, title, style }) => {
   return (
     <button
+      id="addButton"
       style={{
         ...style,
         backgroundColor: "#abcdef",
         borderRadius: "5px",
         height: "30px",
         width: "200px",
-        marginLeft: 10
+        marginLeft: 10,
       }}
       type={"button"}
       onClick={onClick}
