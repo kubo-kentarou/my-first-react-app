@@ -1,3 +1,5 @@
+// 検索機能は失敗したので消しています。
+
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import { Table } from "./components/Table";
