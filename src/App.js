@@ -5,6 +5,7 @@ import "./App.css";
 import { Table } from "./components/Table";
 import { Button } from "./components/Button";
 import { firebaseApp } from "./firebase";
+import firebase from "firebase"; //追加
 //ここから授業リファクタリング
 import { addStudent } from "./components/Addstudent";
 
@@ -12,6 +13,9 @@ function App() {
   const [students, setStudents] = React.useState([]);
   const [studentName, setStudentName] = React.useState("");
   const [id, setId] = React.useState(0);
+  // 池畑翔太の年齢についてのコードを追加します。
+  const [studentAge, setStudentAge] = React.useState(0); //追加
+
   const [currentPageNum, setCurrentPageNum] = React.useState(0);
   const [totalPages, setTotalPages] = React.useState(0);
   const perPage = 3;
@@ -78,6 +82,31 @@ function App() {
       .doc(studentId)
       .update({ name: inputVal });
   };
+  // 池畑翔太のコードここからXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  //年齢が0を下回らない処理を書いている途中なので0を下回るとエラーが発生します。
+  const updatestudentAge = async (studentId, val) => {
+    setStudents(
+      students.map((student) => {
+        if (student.id === studentId) {
+          if (student.age === 0 && val === -1) {
+            return;
+          }
+          student.age = student.age + val;
+        }
+        return student;
+      })
+    );
+    const studentDoc = await firebaseApp
+      .firestore()
+      .collection("students")
+      .doc(studentId)
+      .update({
+        age: firebase.firestore.FieldValue.increment(val),
+      });
+    console.log(studentDoc);
+    // getStudents();
+  };
+  // ここまで XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
   const pageNationStudent = () => {
     chankArray = students.filter((student, index) => {
@@ -133,6 +162,7 @@ function App() {
         students={students}
         updateStudent={updateStudent}
         pageNationStudent={pageNationStudent}
+        updatestudentAge={updatestudentAge} //池畑翔太のコード
       />
       <div className="pageNationButton">
         {currentPageNum >= 1 ? (

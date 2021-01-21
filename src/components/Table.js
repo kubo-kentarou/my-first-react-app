@@ -24,6 +24,7 @@ const Table = ({
   deleteStudent,
   updateStudent,
   pageNationStudent,
+  updatestudentAge,
 }) => {
   let chankArray = pageNationStudent();
   console.log("CHANKARRAY", chankArray);
@@ -40,7 +41,10 @@ const Table = ({
           <tr>
             <TableHeaderCell>ID</TableHeaderCell>
             <TableHeaderCell>NAME</TableHeaderCell>
+            <TableHeaderCell>NAME</TableHeaderCell>
             <TableHeaderCell>ACTION</TableHeaderCell>
+            <TableHeaderCell>ADDITION</TableHeaderCell>
+            <TableHeaderCell>ADDITION</TableHeaderCell>
           </tr>
         </thead>
         <tbody>
@@ -50,6 +54,7 @@ const Table = ({
                 <tr key={s.id}>
                   <TableBodyCell>{s.id}</TableBodyCell>
                   <TableBodyCell>{s.name}</TableBodyCell>
+                  <TableBodyCell>{s.age}</TableBodyCell>
                   <TableBodyCell>
                     <Button
                       onClick={(e) => {
@@ -66,6 +71,26 @@ const Table = ({
                         console.log("CLICKED");
                       }}
                       title="update"
+                    />
+                  </TableBodyCell>
+                  <TableBodyCell>
+                    <Button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        updatestudentAge(s.id, 1);
+                        console.log("CLICKED");
+                      }}
+                      title="plus[＋]"
+                    />
+                  </TableBodyCell>
+                  <TableBodyCell>
+                    <Button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        updatestudentAge(s.id, -1);
+                        console.log("CLICKED");
+                      }}
+                      title="plus[-]"
                     />
                   </TableBodyCell>
                 </tr>
